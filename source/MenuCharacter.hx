@@ -2,71 +2,36 @@ package;
 
 import flixel.FlxSprite;
 import flixel.graphics.frames.FlxAtlasFrames;
-#if MODS_ALLOWED
-import sys.io.File;
-import sys.FileSystem;
-#end
-import openfl.utils.Assets;
-import haxe.Json;
-import haxe.format.JsonParser;
-
-typedef MenuCharacterFile = {
-	var image:String;
-	var scale:Float;
-	var position:Array<Int>;
-	var idle_anim:String;
-	var confirm_anim:String;
-}
 
 class MenuCharacter extends FlxSprite
 {
 	public var character:String;
-	private static var DEFAULT_CHARACTER:String = 'bf';
+
+	private var goesLeftNRight:Bool = false;
+	private var danceLeft:Bool = false;
 
 	public function new(x:Float, character:String = 'bf')
 	{
 		super(x);
 
-		changeCharacter(character);
-	}
-
-	public function changeCharacter(?character:String = 'bf') {
-		if(character == null) character = '';
-		if(character == this.character) return;
-
 		this.character = character;
-		antialiasing = ClientPrefs.globalAntialiasing;
-		visible = true;
 
-		var dontPlayAnim:Bool = false;
-		scale.set(1, 1);
+		var tex = Paths.getSparrowAtlas('campaign_menu_UI_characters');
+		frames = tex;
+
+		animation.addByPrefix('bf', "BF idle dance white", 24);
+		animation.addByPrefix('bfConfirm', 'BF HEY!!', 24, false);
+		animation.addByPrefix('gf', 'GF Dancing Beat WHITE', 24);
+		animation.addByPrefix('dad', "Dad idle dance BLACK LINE", 24);
+		animation.addByPrefix('spooky', 'spooky dance idle BLACK LINES', 24);
+		animation.addByPrefix('pico', "Pico Idle Dance", 24);
+		animation.addByPrefix('mom', "Mom Idle BLACK LINES", 24);
+		animation.addByPrefix('parents-christmas', "Parent Christmas Idle", 24);
+		animation.addByPrefix('senpai', "SENPAI idle Black Lines", 24);
+		animation.addByPrefix('dave', 'Dave Idle BLACK LINE', 24);
+		animation.addByPrefix('empty', 'empty', 24);
+		
+		animation.play(character);
 		updateHitbox();
-
-		switch(character) {
-			case '':
-				visible = false;
-				dontPlayAnim = true;
-			default:
-				var characterPath:String = 'images/menucharacters/' + character + '.json';
-				var rawJson = null;
-
-				var path:String = Paths.getPreloadPath(characterPath);
-				if(!Assets.exists(path)) {
-					path = Paths.getPreloadPath('images/menucharacters/' + DEFAULT_CHARACTER + '.json');
-				}
-				rawJson = Assets.getText(path);
-				
-				var charFile:MenuCharacterFile = cast Json.parse(rawJson);
-				frames = Paths.getSparrowAtlas('menucharacters/' + charFile.image);
-				animation.addByPrefix('idle', charFile.idle_anim, 24);
-				animation.addByPrefix('confirm', charFile.confirm_anim, 24, false);
-
-				if(charFile.scale != 1) {
-					scale.set(charFile.scale, charFile.scale);
-					updateHitbox();
-				}
-				offset.set(charFile.position[0], charFile.position[1]);
-				animation.play('idle');
-		}
 	}
 }

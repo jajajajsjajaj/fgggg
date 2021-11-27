@@ -21,13 +21,13 @@ import Discord.DiscordClient;
 
 using StringTools;
 
-class MainMenuState extends MusicBeatState
+class ExtrasMenuState extends MusicBeatState
 {
 	var curSelected:Int = 0;
 
 	var menuItems:FlxTypedGroup<FlxSprite>;
 
-	var optionShit:Array<String> = ['story mode', 'freeplay', 'extras', 'options'];
+	var optionShit:Array<String> = ['ost', 'credits', 'merch', 'discord'];
 
 	var newGaming:FlxText;
 	var newGaming2:FlxText;
@@ -183,54 +183,64 @@ class MainMenuState extends MusicBeatState
 
 			if (controls.BACK)
 			{
-				FlxG.switchState(new TitleState());
+				FlxG.switchState(new MainMenuState());
 			}
 
 			if (controls.ACCEPT)
 			{
-				selectedSomethin = true;
-				FlxG.sound.play(Paths.sound('confirmMenu'));
-
-				FlxFlicker.flicker(magenta, 1.1, 0.15, false);
-
-				menuItems.forEach(function(spr:FlxSprite)
+        		if (optionShit[curSelected] == 'discord' || optionShit[curSelected] == 'merch')
 				{
-					if (curSelected != spr.ID)
-					{
-						FlxTween.tween(spr, {alpha: 0}, 1.3, {
-							ease: FlxEase.quadOut,
-							onComplete: function(twn:FlxTween)
-							{
-								spr.kill();
-							}
-						});
-					}
-					else
-					{
-						FlxFlicker.flicker(spr, 1, 0.06, false, false, function(flick:FlxFlicker)
-						{
-							var daChoice:String = optionShit[curSelected];
-							switch (daChoice)
-							{
-								case 'story mode':
-									FlxG.switchState(new StoryMenuState());
-									trace("Story Menu Selected");
-								case 'freeplay':
-									FlxG.switchState(new FreeplayState());
-									trace("Freeplay Menu Selected");
-								case 'options':
-									FlxG.switchState(new OptionsMenu());
-								case 'extras':
-									FlxG.switchState(new ExtrasMenuState());
-								case 'ost':
-									FlxG.switchState(new MusicPlayerState());
-								case 'credits':
-									FlxG.switchState(new CreditsMenuState());
-							}
-						});
-					}
-				});
-				
+                    switch(optionShit[curSelected])
+                    {
+                        case 'discord':
+                            fancyOpenURL("https://www.discord.gg/vsdave");
+                        case 'merch':
+                            fancyOpenURL("https://my-store-c1bc70.creator-spring.com/");
+                    }
+				}
+                else
+                {
+                    selectedSomethin = true;
+                    FlxG.sound.play(Paths.sound('confirmMenu'));
+    
+                    FlxFlicker.flicker(magenta, 1.1, 0.15, false);
+    
+                    menuItems.forEach(function(spr:FlxSprite)
+                    {
+                        if (curSelected != spr.ID)
+                        {
+                            FlxTween.tween(spr, {alpha: 0}, 1.3, {
+                                ease: FlxEase.quadOut,
+                                onComplete: function(twn:FlxTween)
+                                {
+                                    spr.kill();
+                                }
+                            });
+                        }
+                        else
+                        {
+                            FlxFlicker.flicker(spr, 1, 0.06, false, false, function(flick:FlxFlicker)
+                            {
+                                var daChoice:String = optionShit[curSelected];
+                                switch (daChoice)
+                                {
+                                    case 'story mode':
+                                        FlxG.switchState(new StoryMenuState());
+                                        trace("Story Menu Selected");
+                                    case 'freeplay':
+                                        FlxG.switchState(new FreeplayState());
+                                        trace("Freeplay Menu Selected");
+                                    case 'options':
+                                        FlxG.switchState(new OptionsMenu());
+                                    case 'ost':
+                                        FlxG.switchState(new MusicPlayerState());
+                                    case 'credits':
+                                        FlxG.switchState(new CreditsMenuState());
+                                }
+                            });
+                        }
+                    });
+                }				
 			}
 		}
 
@@ -240,7 +250,6 @@ class MainMenuState extends MusicBeatState
 		{
 			spr.screenCenter(X);
 		});
-		FlxG.save.flush();
 	}
 
 	override function beatHit()

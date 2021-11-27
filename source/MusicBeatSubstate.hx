@@ -3,8 +3,6 @@ package;
 import Conductor.BPMChangeEvent;
 import flixel.FlxG;
 import flixel.FlxSubState;
-import flixel.FlxBasic;
-import flixel.FlxSprite;
 #if mobileC
 import flixel.FlxCamera;
 import ui.FlxVirtualPad;
@@ -21,7 +19,7 @@ class MusicBeatSubstate extends FlxSubState
 	private var lastBeat:Float = 0;
 	private var lastStep:Float = 0;
 
-	private var curStep:Int = 0;
+	public static var curStep:Int = 0;
 	private var curBeat:Int = 0;
 	private var controls(get, never):Controls;
 
@@ -45,10 +43,6 @@ class MusicBeatSubstate extends FlxSubState
 		controls.setVirtualPad(_virtualpad, DPad, Action);
 		trackedinputs = controls.trackedinputs;
 		controls.trackedinputs = [];
-
-		#if android
-		controls.addAndroidBack();
-		#end
 	}
 	
 	override function destroy() {

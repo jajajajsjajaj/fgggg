@@ -9,6 +9,8 @@ class GitarooPause extends MusicBeatState
 	var replayButton:FlxSprite;
 	var cancelButton:FlxSprite;
 
+	var suckMyBambis:Array<String> = ['bambi', 'bambi-new', 'bambi-splitathon', 'bambi-angey', 'bambi-old', 'bambi-bevel', 'bambi-farmer-beta', 'bambi-3d', 'bambi-unfair'];
+
 	var replaySelect:Bool = false;
 
 	public function new():Void
@@ -25,11 +27,15 @@ class GitarooPause extends MusicBeatState
 		add(bg);
 
 		var bf:FlxSprite = new FlxSprite(0, 30);
-		bf.frames = Paths.getSparrowAtlas('pauseAlt/bfLol');
+		if(suckMyBambis.contains(PlayState.formoverride.toLowerCase()))
+			bf.frames = Paths.getSparrowAtlas('pauseAlt/bambLol');
+		else
+			bf.frames = Paths.getSparrowAtlas('pauseAlt/bfLol');
 		bf.animation.addByPrefix('lol', "funnyThing", 13);
 		bf.animation.play('lol');
 		add(bf);
 		bf.screenCenter(X);
+		bf.antialiasing = true;
 
 		replayButton = new FlxSprite(FlxG.width * 0.28, FlxG.height * 0.7);
 		replayButton.frames = Paths.getSparrowAtlas('pauseAlt/pauseUI');
@@ -37,6 +43,7 @@ class GitarooPause extends MusicBeatState
 		replayButton.animation.appendByPrefix('selected', 'yellowreplay');
 		replayButton.animation.play('selected');
 		add(replayButton);
+		replayButton.antialiasing = true;
 
 		cancelButton = new FlxSprite(FlxG.width * 0.58, replayButton.y);
 		cancelButton.frames = Paths.getSparrowAtlas('pauseAlt/pauseUI');
@@ -44,36 +51,31 @@ class GitarooPause extends MusicBeatState
 		cancelButton.animation.appendByPrefix('selected', 'cancelyellow');
 		cancelButton.animation.play('selected');
 		add(cancelButton);
+		cancelButton.antialiasing = true;
 
 		changeThing();
 
 		#if mobileC
-		addVirtualPad(LEFT_RIGHT, A_B);
-		#end
+		addVirtualPad(LEFT_RIGHT, A);
+		#end		
 
 		super.create();
 	}
 
 	override function update(elapsed:Float)
 	{
-		if (controls.UI_LEFT_P || controls.UI_RIGHT_P)
+		if (controls.LEFT_P || controls.RIGHT_P)
 			changeThing();
 
 		if (controls.ACCEPT)
 		{
 			if (replaySelect)
 			{
-				MusicBeatState.switchState(new PlayState());
+				FlxG.switchState(new PlayState());
 			}
 			else
 			{
-				PlayState.usedPractice = false;
-				PlayState.changedDifficulty = false;
-				PlayState.seenCutscene = false;
-				PlayState.deathCounter = 0;
-				PlayState.cpuControlled = false;
-				MusicBeatState.switchState(new MainMenuState());
-				FlxG.sound.playMusic(Paths.music('freakyMenu'));
+				FlxG.switchState(new MainMenuState());
 			}
 		}
 
